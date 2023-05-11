@@ -1,0 +1,294 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>使用python快捷上传图片 | 行走的博客</title><meta name="author" content="行走"><meta name="copyright" content="行走"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这两天在研究怎样快捷的把图片上传到主机上，主要是用于markdown文章的图片插入。一开始我选择的是PicGo这个开源软件，但是吧，它老是上传失败，折腾了很久，放弃了。然后，我试图用go语言编写图片上传的程序，但是搜索发现，go不是很擅长这方面的东西，很麻烦，本人技术能力有限，果断放弃。最后，我试图用python编写图片上传的程序，很好使。 介绍这个脚本会添加热键，热键执行读取剪贴板图片然后通过s"><meta property="og:type" content="article"><meta property="og:title" content="使用python快捷上传图片"><meta property="og:url" content="https://www.lael.cn/p/d93cdafb.html"><meta property="og:site_name" content="行走的博客"><meta property="og:description" content="这两天在研究怎样快捷的把图片上传到主机上，主要是用于markdown文章的图片插入。一开始我选择的是PicGo这个开源软件，但是吧，它老是上传失败，折腾了很久，放弃了。然后，我试图用go语言编写图片上传的程序，但是搜索发现，go不是很擅长这方面的东西，很麻烦，本人技术能力有限，果断放弃。最后，我试图用python编写图片上传的程序，很好使。 介绍这个脚本会添加热键，热键执行读取剪贴板图片然后通过s"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.lael.cn/img/cover_5.jpg"><meta property="article:published_time" content="2023-04-03T00:30:48.000Z"><meta property="article:modified_time" content="2023-05-11T11:07:53.114Z"><meta property="article:author" content="行走"><meta property="article:tag" content="python"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.lael.cn/img/cover_5.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.lael.cn/p/d93cdafb.html"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload='this.media="all"'><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload='this.media="all"'><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"prismjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE={title:"使用python快捷上传图片",isPost:!0,isHome:!1,isHighlightShrink:!1,isToc:!0,postUpdate:"2023-05-11 11:07:53"}</script><noscript><style type="text/css">#nav{opacity:1}.justified-gallery img{opacity:1}#post-meta time,#recent-posts time{display:inline!important}</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/prism.css"><script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script><script>LA.init({id:"K3qLCKk0fYixGdC4",ck:"K3qLCKk0fYixGdC4"})</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror='onerror=null,src="/img/friend_404.gif"' alt="avatar"></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span>时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span>标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span>分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span>友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span>关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="行走的博客"><span class="site-name">行走的博客</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);" rel="external nofollow noreferrer"><span>搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span>时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span>标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span>分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span>友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span>关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">使用python快捷上传图片</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-03T00:30:48.000Z" title="发表于 2023-04-03 00:30:48">2023-04-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-05-11T11:07:53.114Z" title="更新于 2023-05-11 11:07:53">2023-05-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/python/">python</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">750</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" data-flag-title="使用python快捷上传图片"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><p>这两天在研究怎样快捷的把图片上传到主机上，主要是用于<code>markdown</code>文章的图片插入。<br>一开始我选择的是PicGo这个开源软件，但是吧，它老是上传失败，折腾了很久，放弃了。<br>然后，我试图用go语言编写图片上传的程序，但是搜索发现，go不是很擅长这方面的东西，很麻烦，本人技术能力有限，果断放弃。<br>最后，我试图用python编写图片上传的程序，很好使。</p><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>这个脚本会添加热键，热键执行读取剪贴板图片然后通过sftp上传到指定主机的指定位置的操作并把外链复制到剪贴板<br>github仓库地址<a target="_blank" href="https://www.lael.cn/go/#aHR0cHM6Ly9naXRodWIuY29tL2xhZWxsaWFuZy9jbGlwYm9hcmRfaW1nX3VwbG9hZA==" rel="noopener external nofollow noreferrer">https://github.com/laelliang/clipboard_img_upload</a></p><h1 id="config设置"><a href="#config设置" class="headerlink" title="config设置"></a>config设置</h1><table><thead><tr><th>参数名</th><th>含义</th></tr></thead><tbody><tr><td>privateKeyPath</td><td>私钥位置</td></tr><tr><td>imgSavePath</td><td>剪贴板文件临时保存位置</td></tr><tr><td>host</td><td>主机ip</td></tr><tr><td>port</td><td>ssh端口</td></tr><tr><td>userName</td><td>登录用户名</td></tr><tr><td>serverPath</td><td>远程主机保存位置</td></tr><tr><td>webPath</td><td>上传完毕后复制到剪贴板的前缀</td></tr></tbody></table><h1 id="如何解决热键冲突"><a href="#如何解决热键冲突" class="headerlink" title="如何解决热键冲突"></a>如何解决热键冲突</h1><p>推荐使用OpenArk删除热键<br>下载地址<a target="_blank" href="https://www.lael.cn/go/#aHR0cHM6Ly9naXRodWIuY29tL0JsYWNrSU5UMy9PcGVuQXJrL3JlbGVhc2Vz" rel="noopener external nofollow noreferrer">https://github.com/BlackINT3/OpenArk/releases</a></p><h1 id="python代码"><a href="#python代码" class="headerlink" title="python代码"></a>python代码</h1><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> PIL <span class="token keyword">import</span> Image<span class="token punctuation">,</span> ImageGrab
+<span class="token keyword">import</span> paramiko
+<span class="token keyword">import</span> time
+<span class="token keyword">import</span> ctypes
+<span class="token keyword">import</span> ctypes<span class="token punctuation">.</span>wintypes
+<span class="token keyword">import</span> win32con
+<span class="token keyword">from</span> threading <span class="token keyword">import</span> Thread
+<span class="token keyword">from</span> win11toast <span class="token keyword">import</span> toast
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> yaml
+<span class="token keyword">import</span> pyperclip
+
+<span class="token keyword">class</span> <span class="token class-name">HotKey</span><span class="token punctuation">(</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    注册热键
+    """</span>
+
+    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> call_back<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+
+        <span class="token comment"># https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-hotkey</span>
+        hotKeyCtrl <span class="token operator">=</span> <span class="token number">0x0002</span>
+        hotKeyShift <span class="token operator">=</span> <span class="token number">0x0004</span>
+
+        <span class="token comment"># https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes</span>
+        keyU <span class="token operator">=</span> <span class="token number">0x55</span>
+        
+        <span class="token comment"># 注册全局热键</span>
+        self<span class="token punctuation">.</span>HotKeyId <span class="token operator">=</span> ctypes<span class="token punctuation">.</span>WinDLL<span class="token punctuation">(</span><span class="token string">"user32.dll"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>RegisterHotKey<span class="token punctuation">(</span><span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token number">34001</span><span class="token punctuation">,</span> hotKeyCtrl <span class="token operator">|</span> hotKeyShift<span class="token punctuation">,</span> keyU<span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>HotKeyId <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
+            toast<span class="token punctuation">(</span><span class="token string">"热键注册失败，程序已退出"</span><span class="token punctuation">)</span>
+            sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        msg <span class="token operator">=</span> ctypes<span class="token punctuation">.</span>wintypes<span class="token punctuation">.</span>MSG<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> ctypes<span class="token punctuation">.</span>windll<span class="token punctuation">.</span>user32<span class="token punctuation">.</span>GetMessageA<span class="token punctuation">(</span>ctypes<span class="token punctuation">.</span>byref<span class="token punctuation">(</span>msg<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">:</span>
+                <span class="token keyword">if</span> msg<span class="token punctuation">.</span>message <span class="token operator">==</span> win32con<span class="token punctuation">.</span>WM_HOTKEY <span class="token keyword">and</span> msg<span class="token punctuation">.</span>wParam <span class="token operator">==</span> <span class="token number">34001</span><span class="token punctuation">:</span>
+                    call_back<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">def</span> <span class="token function">close</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        ctypes<span class="token punctuation">.</span>WinDLL<span class="token punctuation">(</span><span class="token string">"user32.dll"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>UnregisterHotKey<span class="token punctuation">(</span><span class="token boolean">None</span><span class="token punctuation">,</span> self<span class="token punctuation">.</span>HotKeyId<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">sftp_upload_file</span><span class="token punctuation">(</span>host<span class="token punctuation">,</span>user<span class="token punctuation">,</span>port<span class="token punctuation">,</span>private_key_path<span class="token punctuation">,</span>server_path<span class="token punctuation">,</span> local_path<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    上传文件，注意：不支持文件夹
+    :param host: 主机名
+    :param port: 端口
+    :param user: 用户名
+    :param private_key_path: 私钥路径
+    :param server_path: 远程路径，比如：/home/sdn/tmp.txt
+    :param local_path: 本地路径，比如：D:/text.txt
+    :return: bool
+    """</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        private_key <span class="token operator">=</span> paramiko<span class="token punctuation">.</span>RSAKey<span class="token punctuation">.</span>from_private_key_file<span class="token punctuation">(</span>private_key_path<span class="token punctuation">)</span>
+        client <span class="token operator">=</span> paramiko<span class="token punctuation">.</span>SSHClient<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        client<span class="token punctuation">.</span>set_missing_host_key_policy<span class="token punctuation">(</span>paramiko<span class="token punctuation">.</span>AutoAddPolicy<span class="token punctuation">)</span>
+        client<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>hostname<span class="token operator">=</span>host<span class="token punctuation">,</span>port<span class="token operator">=</span>port<span class="token punctuation">,</span>username<span class="token operator">=</span>user<span class="token punctuation">,</span>pkey<span class="token operator">=</span>private_key<span class="token punctuation">)</span>
+        sftp <span class="token operator">=</span> client<span class="token punctuation">.</span>open_sftp<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        sftp<span class="token punctuation">.</span>put<span class="token punctuation">(</span>local_path<span class="token punctuation">,</span> server_path<span class="token punctuation">)</span>
+        sftp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        client<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> <span class="token boolean">True</span>
+    <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+        <span class="token keyword">return</span> <span class="token boolean">False</span>
+
+
+<span class="token keyword">def</span> <span class="token function">save_clipboard_img</span><span class="token punctuation">(</span>savePath<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    保存剪贴板图片
+    """</span>
+    <span class="token comment"># 读取剪贴板图片</span>
+    im <span class="token operator">=</span> ImageGrab<span class="token punctuation">.</span>grabclipboard<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> im <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token boolean">None</span>
+    <span class="token comment"># 获得当前时间时间戳</span>
+    now <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token comment"># 转换为其他日期格式</span>
+    timeArray <span class="token operator">=</span> time<span class="token punctuation">.</span>localtime<span class="token punctuation">(</span>now<span class="token punctuation">)</span>
+    otherStyleTime <span class="token operator">=</span> time<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">"%Y%m%d%H%M%S"</span><span class="token punctuation">,</span> timeArray<span class="token punctuation">)</span>
+
+    imgSavePath <span class="token operator">=</span> savePath  <span class="token operator">+</span> <span class="token string">'\\'</span> <span class="token operator">+</span> otherStyleTime <span class="token operator">+</span> <span class="token string">".jpg"</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>imgSavePath<span class="token punctuation">)</span>
+    im<span class="token punctuation">.</span>save<span class="token punctuation">(</span>imgSavePath<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> otherStyleTime <span class="token operator">+</span> <span class="token string">".jpg"</span>
+
+<span class="token keyword">def</span> <span class="token function">clipboard_upload</span><span class="token punctuation">(</span>conf<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    imgName <span class="token operator">=</span> save_clipboard_img<span class="token punctuation">(</span>conf<span class="token punctuation">[</span><span class="token string">'imgSavePath'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> imgName <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        toast<span class="token punctuation">(</span><span class="token string">"剪贴板内没有图片"</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> <span class="token boolean">None</span>
+    imgSavePath <span class="token operator">=</span> conf<span class="token punctuation">[</span><span class="token string">'imgSavePath'</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">'\\'</span> <span class="token operator">+</span> imgName
+    serverPath <span class="token operator">=</span> conf<span class="token punctuation">[</span><span class="token string">'serverPath'</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">'/'</span> <span class="token operator">+</span> imgName
+    upload_result <span class="token operator">=</span> sftp_upload_file<span class="token punctuation">(</span>conf<span class="token punctuation">[</span><span class="token string">'host'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>conf<span class="token punctuation">[</span><span class="token string">'userName'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>conf<span class="token punctuation">[</span><span class="token string">'port'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>conf<span class="token punctuation">[</span><span class="token string">'privateKeyPath'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>serverPath<span class="token punctuation">,</span>imgSavePath<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> upload_result<span class="token punctuation">:</span>
+        webImgPath <span class="token operator">=</span> conf<span class="token punctuation">[</span><span class="token string">'webPath'</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">'/'</span> <span class="token operator">+</span> imgName
+        pyperclip<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>webImgPath<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        toast<span class="token punctuation">(</span><span class="token string">"上传失败"</span><span class="token punctuation">)</span>
+
+
+
+<span class="token keyword">def</span> <span class="token function">read_config</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 获取yaml文件路径</span>
+    yamlPath <span class="token operator">=</span> <span class="token string">'config.yml'</span>
+    fieldList <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">'privateKeyPath'</span><span class="token punctuation">,</span><span class="token string">'imgSavePath'</span><span class="token punctuation">,</span> <span class="token string">'host'</span><span class="token punctuation">,</span> <span class="token string">'port'</span><span class="token punctuation">,</span> <span class="token string">'userName'</span><span class="token punctuation">,</span> <span class="token string">'serverPath'</span><span class="token punctuation">,</span> <span class="token string">'webPath'</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>yamlPath<span class="token punctuation">,</span> <span class="token string">'r'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+        ayml <span class="token operator">=</span> yaml<span class="token punctuation">.</span>load<span class="token punctuation">(</span>f<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>Loader<span class="token operator">=</span>yaml<span class="token punctuation">.</span>Loader<span class="token punctuation">)</span>
+        ayml_keys <span class="token operator">=</span> ayml<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">for</span> field <span class="token keyword">in</span> fieldList<span class="token punctuation">:</span>
+            <span class="token keyword">if</span> field <span class="token keyword">in</span> ayml_keys <span class="token operator">==</span> <span class="token boolean">False</span><span class="token punctuation">:</span>
+                toast<span class="token punctuation">(</span>field <span class="token operator">+</span> <span class="token string">"读取失败，程序已退出"</span><span class="token punctuation">)</span>
+                sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">return</span> ayml
+
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    HotKey <span class="token operator">=</span> HotKey<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        conf <span class="token operator">=</span> read_config<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        upload <span class="token operator">=</span> <span class="token keyword">lambda</span> <span class="token punctuation">:</span> clipboard_upload<span class="token punctuation">(</span>conf<span class="token punctuation">)</span>
+        HotKey<span class="token punctuation">.</span>run<span class="token punctuation">(</span>upload<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        HotKey<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://www.lael.cn">行走</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.lael.cn/p/d93cdafb.html">https://www.lael.cn/p/d93cdafb.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://www.lael.cn/go/#aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC8=" rel="noopener external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.lael.cn" target="_blank">行走的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/python/">python</a></div><div class="post_share"><div class="social-share" data-image="/img/cover_5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload='this.media="all"'><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/p/d1ada1c1.html" title="wifi密码破解总结"><img class="cover" src="/img/cover_1.png" onerror='onerror=null,src="/img/404.jpg"' alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">wifi密码破解总结</div></div></a></div><div class="next-post pull-right"><a href="/p/919783a5.html" title="使用百度网盘开放api备份文件夹"><img class="cover" src="/img/cover_5.jpg" onerror='onerror=null,src="/img/404.jpg"' alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">使用百度网盘开放api备份文件夹</div></div></a></div></nav><hr><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror='this.onerror=null,this.src="/img/friend_404.gif"' alt="avatar"></div><div class="author-info__name">行走</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" href="https://www.lael.cn/go/#aHR0cHM6Ly9naXRodWIuY29tL2xhZWxMaWFuZw==" rel="noopener external nofollow noreferrer"><i class="fab fa-github"></i><span>GitHub</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">这里是公告</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#config%E8%AE%BE%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">config设置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E7%83%AD%E9%94%AE%E5%86%B2%E7%AA%81"><span class="toc-number">3.</span> <span class="toc-text">如何解决热键冲突</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#python%E4%BB%A3%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">python代码</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/p/d1ada1c1.html" title="wifi密码破解总结"><img src="/img/cover_1.png" onerror='this.onerror=null,this.src="/img/404.jpg"' alt="wifi密码破解总结"></a><div class="content"><a class="title" href="/p/d1ada1c1.html" title="wifi密码破解总结">wifi密码破解总结</a><time datetime="2023-04-19T10:17:58.000Z" title="发表于 2023-04-19 10:17:58">2023-04-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/d93cdafb.html" title="使用python快捷上传图片"><img src="/img/cover_5.jpg" onerror='this.onerror=null,this.src="/img/404.jpg"' alt="使用python快捷上传图片"></a><div class="content"><a class="title" href="/p/d93cdafb.html" title="使用python快捷上传图片">使用python快捷上传图片</a><time datetime="2023-04-03T00:30:48.000Z" title="发表于 2023-04-03 00:30:48">2023-04-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/919783a5.html" title="使用百度网盘开放api备份文件夹"><img src="/img/cover_5.jpg" onerror='this.onerror=null,this.src="/img/404.jpg"' alt="使用百度网盘开放api备份文件夹"></a><div class="content"><a class="title" href="/p/919783a5.html" title="使用百度网盘开放api备份文件夹">使用百度网盘开放api备份文件夹</a><time datetime="2023-03-31T19:20:10.000Z" title="发表于 2023-03-31 19:20:10">2023-03-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/673d8295.html" title="一点关于爱而不得的思考"><img src="/img/cover_3.jpg" onerror='this.onerror=null,this.src="/img/404.jpg"' alt="一点关于爱而不得的思考"></a><div class="content"><a class="title" href="/p/673d8295.html" title="一点关于爱而不得的思考">一点关于爱而不得的思考</a><time datetime="2023-03-27T15:13:25.000Z" title="发表于 2023-03-27 15:13:25">2023-03-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/p/8db0ca1b.html" title="某音乐网站爬取总结"><img src="/img/cover_1.png" onerror='this.onerror=null,this.src="/img/404.jpg"' alt="某音乐网站爬取总结"></a><div class="content"><a class="title" href="/p/8db0ca1b.html" title="某音乐网站爬取总结">某音乐网站爬取总结</a><time datetime="2023-03-26T18:09:41.000Z" title="发表于 2023-03-26 18:09:41">2023-03-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="framework-info"><span>框架 </span><a target="_blank" href="https://www.lael.cn/go/#aHR0cHM6Ly9oZXhvLmlv" rel="noopener external nofollow noreferrer">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" href="https://www.lael.cn/go/#aHR0cHM6Ly9naXRodWIuY29tL2plcnJ5YzEyNy9oZXhvLXRoZW1lLWJ1dHRlcmZseQ==" rel="noopener external nofollow noreferrer">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'ebeba47354bc0543b389',
+      clientSecret: 'adee5099979966a8ed73dbc5f0d6767786126984',
+      repo: 'laelliang.github.io',
+      owner: 'laelliang',
+      admin: ['laelliang'],
+      id: 'addfbdf6ff4d02ef814dee05e172962d',
+      updateCountCallback: commentCount
+    },))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css')
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script defer id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zindex="-1" mobile="false" data-click="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span> 数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div><div id="local-search-results"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></body></html>
